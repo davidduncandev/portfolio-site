@@ -1,0 +1,32 @@
+```js !!
+import type { ClassValue } from 'clsx';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+/**
+ * Utility class management solution using clsx and twMerge
+ */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+const Comp = (props: React.ComponentProps<'div'>) => {
+  return <div {...props} />;
+};
+```
+
+```js !!
+import type { ClassValue } from 'clsx';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+/**
+ * Utility class management solution using clsx and twMerge
+ */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+const Comp = ({ className, ...rest }: React.ComponentProps<'div'>) => {
+  // !callout[/className\)/] user provided classes are now composed
+  return <div className={cn('flex p-6', className)} {...rest} />;
+};
+```

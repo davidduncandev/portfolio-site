@@ -1,0 +1,101 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import {
+  AsChild,
+  ClassNames,
+  ComposeEventHandlers,
+  ComposeRefs,
+  ComposableTabs,
+  ForwardRef,
+} from './code-blocks'
+
+export const article = {
+  author: 'David Duncan',
+  date: '2023-09-02',
+  title: 'Composable React Components',
+  description:
+    'After years of developing reusable components with accessibility and styling in mind, it was mastering composition which completed the puzzle—enabling truly flexible UI abstractions.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+After years of developing reusable components with accessibility and styling in mind, it was mastering composition which completed the puzzle—enabling truly flexible UI abstractions.
+
+## High-level component abstractions
+
+A natural instinct when building reusable components is to create high-level APIs where the component handles all the internal rendering of many DOM nodes. These abstractions are not flexible to emerging use cases, and consequently result in prop-heavy APIs. New render-logic props tend to be added to support new use cases at the cost of growing complexity with how the DOM hierarchy is rendered internally. This can place reusable components on the critical path for consumers, resulting in a bottleneck. Instead, favouring composition over extensive render-logic props enables the creation of more flexible components that avoid becoming blockers in the development process.
+
+## Compound components
+
+A better approach is to use inversion of control to avoid premature high-level abstractions based on uncertain future use cases. By designing for flexibility through composition, we can create more adaptable and maintainable components. React’s composability is one of its key strengths, and the compound component pattern is a powerful technique in this regard. This pattern involves building two or more components that work together as a cohesive unit to form a complete, functional component.
+
+As Ryan Florence outlines in his excellent [Reach Philosphy](https://gist.github.com/ryanflorence/e5c794e6093d16a69fa88d2112a292f7) writeup, a better approach is to design an API where each compound component part corresponds directly to a single rendered DOM node. For instance, a Tab component has a specific structure defined by WAI-ARIA guidelines, and we can create a dedicated component for each DOM node required by that structure. These often map closely to specific ARIA roles.
+
+<ComposableTabs />
+
+The benefit of this approach is that consumers gain direct access to each component part—allowing for custom styling, DOM manipulation, attribute additions, or reordering of elements. However, achieving this level of flexibility requires some additional considerations. To support it effectively, we need to address the following:
+
+1. Opt into the forwardRef API
+2. Allow the consumer to render different element tags
+3. Compose styles
+4. Compose refs
+5. Compose event handlers
+6. Expose internal state as data attributes for styling hooks
+7. Use context over cloneElement
+8. Controlled APIs
+
+### The forwardRef API
+
+Using the forwardRef API in every component is essential to enable DOM access. A common issue I've seen is using a custom Button as a trigger for a Tooltip, but without forwardRef, the Tooltip can't reference the underlying button element to calculate its position for tooltip placement.
+
+Additionally, all props should be passed through to the underlying DOM element. This allows consumers to add custom attributes—like `data-` or `aria-`—without us needing to explicitly support each one. By forwarding all props, we enable maximum flexibility with minimal effort.
+
+<ForwardRef />
+
+### Allow different element tags
+
+Semantic document structure is a crucial foundation for accessibility. When a specific semantic tag isn't needed we should allow people the ability to pass in their own component or native element instead. If they wish to render a layout component as section, say, they should be able to do that. The `as` prop in React is one option. Another powerful option is the asChild prop - an abstraction created from [Radix UI](https://www.radix-ui.com/primitives/docs/guides/composition) using their `Slot` component. The `asChild` prop allows the functionality for one element to be composed onto another component or element passed in as the first child. Here is how you can implement this in a component using Radix Slot component.
+
+<AsChild />
+
+The `asChild` prop is a powerful tool, and I’ve found it highly effective in practice. One of its strengths is the ability to compose multiple primitives—for example, using a single Button component as both a Dialog trigger and a Tooltip trigger. However, there’s an important caveat: if multiple components rely on the same `data-` attribute (like data-state), conflicts can occur. For instance, a Tooltip might use `data-state="delayed-open"` while a Dialog uses `data-state="open"`, but only one will be retained, potentially breaking styles that rely on the missing attribute. A workaround is to style based on `aria-` attributes instead, or to create a wrapper component that remaps conflicting `data-` attributes to namespaced versions.
+
+One final caveat with `asChild` is that it’s easy to forget to include the prop when it’s needed. I’ve seen a few merge requests where a button ends up nested inside another button because `asChild` was omitted. In these cases, the component renders its default element (a button, for example), while the consumer also passes in their own button as a child. This results in invalid HTML and can lead to unexpected behavior—something to watch out for during development and code review.
+
+### Composing styles
+
+If your component has internal styling, it's important to compose (merge) those internal styles with any user provided styles. The [clsx](https://github.com/lukeed/clsx) package is a popular option for composing classnames. For tailwind however, this isn't going to help resolve class conflicts. Any classnames which target the same CSS property will not yield a predictable result, since specificity is influenced by where in the CSS the style is declared. The [tailwind-merge](https://github.com/dcastil/tailwind-merge) package can help resolve these conflicts. The `cn` utility from [shadcn ui](https://ui.shadcn.com/) will combine both to enable the composition of classnames.
+
+<ClassNames />
+
+### Composing refs
+
+If your component needs an internal ref, we now have a challenge of composing multiple refs onto a single element. A standard solution to this is to use a callback ref. React will call the ref callback with the DOM node as the argument. By creating a custom React hook that takes multiple refs—both callback and object types—and returns a single callback ref, we can assign the DOM node to all original refs whenever the callback is triggered. I won't provide a specific implementation here, but note that implementations of this can be be found from [Reach UI](https://github.com/reach/reach-ui/blob/dev/packages/utils/src/compose-refs.ts) and [Radix UI](https://github.com/radix-ui/primitives/tree/main/packages/react/compose-refs) for example.
+
+<ComposeRefs />
+
+### Compose event handlers
+
+If your component needs an internal event handler we should compose that so it can be preventDefault-ed by apps. If we consider the Form `onsubmit` event handler, it passes the event out which means it can be preventDefault-ed. Our internal handlers should do the same. Similar with compose refs, I won't repeat any specific implementation here, but I can point you towards a couple examples from [Reach UI](https://github.com/reach/reach-ui/blob/dev/packages/utils/src/compose-event-handlers.ts) and [Radix UI](https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx).
+
+<ComposeEventHandlers />
+
+### Data attributes
+
+Since states of a component often need styled different, it can be very useful to expose internal state as data attributes. An open Accordion item could have `data-state="open"` for example, and that means styles can now target that data attribute.
+
+### Use context over cloneElement
+
+When building compound components where each component part requires access to state and logic to function properly, using React context is preferable over cloneElement since cloneElement can break composition. If a consumer wants to add a wrapper div for styling purposes say, its parent component using cloneElement would clone that div rather than the intended component. React context allows great flexibility since extra components can be composed and components can be re-ordered.
+
+### Controlled APIs
+
+Uncontrolled APIs are easier to use since a consumer has less configuration to worry about. They are however less flexible. It's common for a parent component to want to drive the component behaviour by props instead. A controlled API usually consists of one or more value props which control one atomic part of the component state, and each value prop is paired with an onChange callback. A component can support both uncontrolled and controlled APIs by detecting the presence of the value prop, and switching to a controlled mode.
+
+### High-level APIs
+
+I started by explaining that higher-level abstractions tend to lead to an explosion of render-logic props to handle new use cases. However, if we have created a fully composable API, it can be still be beneficial to provide a higher-level abstraction. If a component requires several component parts, but 95% of use cases are the same, it could be a bit much to ask a consumer to compose in all the parts every single time. We can wrap the composable parts into a higher-level abstraction to make our component more convenient to use. The important part is that if a new use case emerges, we don't have to default to creating a new render-logic prop, we can instead simply bail out of the higher-level abstraction by "dropping" down to the composable API. This is how we keep the components off the critical path.

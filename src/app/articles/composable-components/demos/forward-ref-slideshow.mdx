@@ -1,0 +1,18 @@
+```js !!
+const Comp = (
+  props: React.ComponentProps<'div'>
+) => {
+  return <div {...props} />;
+};
+```
+
+```js !!
+const Comp = forwardRef<
+  React.ElementRef<'div'>,
+  React.ComponentPropsWithoutRef<'div'>
+>((props, forwardedRef) => {
+  return (
+    <div ref={forwardedRef} {...props} />
+  );
+});
+```

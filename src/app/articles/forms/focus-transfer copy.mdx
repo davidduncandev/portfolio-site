@@ -1,0 +1,33 @@
+```js !!
+const useFocusTransfer = ({
+  visible: visibleProp,
+  defaultVisible = false,
+  onVisibleChange: onVisibleChangeHandler,
+} = {}) => {
+  // !callout[/useControlledState/] State can be controlled or uncontrolled
+  const [visible, setVisible] = useControlledState({
+    controlledValue: visibleProp,
+    defaultValue: defaultVisible,
+  })
+  const focusTargetRef = React.useRef(null)
+  const onVisibleChange = React.useCallback(() => {
+    // !callout[/flushSync/] Update state inside flushSync
+    flushSync?.(() => {
+      // !callout[/setVisible/] This is just a noop when using controlled mode
+      setVisible((prevSwitched) => !prevSwitched)
+      onVisibleChangeHandler?.(!visible)
+    })
+    // !callout[/focus/] It's now safe to focus the target element
+    focusTargetRef.current?.focus()
+  }, [onVisibleChangeHandler, setVisible, visible])
+
+  return React.useMemo(
+    () => ({
+      focusTargetRef,
+      onVisibleChange,
+      visible,
+    }),
+    [focusTargetRef, onVisibleChange, visible],
+  )
+}
+```

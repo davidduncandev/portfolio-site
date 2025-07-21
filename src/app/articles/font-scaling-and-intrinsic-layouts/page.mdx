@@ -1,0 +1,55 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import {
+  SidebarLayoutDemo,
+  SidebarResizeDemo,
+  ComplexLayoutDemo,
+} from './sidebar-demo'
+
+export const article = {
+  author: 'David Duncan',
+  date: '2022-07-05',
+  title: 'Font scaling and intrinsic layouts',
+  description:
+    'When I was tasked with unlocking the capability for font scaling, I knew we needed to harness flow and wrapping behaviour from algorithmic formatting contexts such as Flexbox and CSS Grid.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+## Intrinsic Responsiveness
+
+When I was tasked with unlocking the capability for font scaling, I knew we needed to harness flow and wrapping behaviour from algorithmic formatting contexts such as Flexbox and CSS Grid. We had a layout where the main content could become constrained by the presence of a side panel. This meant we could not rely on media queries since they pertain to the viewport rather than the actual width available to a section of UI. I was already shifting my perspective on responsive layouts to intrinsic techniques due to the proliferation of devices resulting in the lack of "perfect" breakpoints. I'd attempted in the past to set some breakpoints, not to specific device sizes, but to values in "dead zones" between clusters of common devices. Intrinsic techniques however would allow us to be the browsers mentor, rather than dictate the behaviour we want via strict limited breakpoints. The font-scaling requirement gave me the opportunity I needed to deep dive into intrinsic layouts.
+
+I was already very familiar with the Flexbox module's provision of `flex-basis` to create a self-governing layout with minimum effort. However, there were different layout patterns which would require more complex solutions. I knew we needed to work with CSS Flexbox and Grid algorithms in such as way that we offer suggestions via the layout modules properties, but allow the browser to make the final calculations. The resources which really helped me were:
+
+1. [Every Layout](https://every-layout.dev/) by Andy Bell and Heydon Pickering
+2. [Container Query Solutions with CSS Grid and Flexbox](https://moderncss.dev/container-query-solutions-with-css-grid-and-flexbox/) by Stephanie Eckles
+3. [SmolCSS](https://smolcss.dev/) by Stephanie Eckles
+4. [Flexbox Holy Albatross](https://heydonworks.com/article/the-flexbox-holy-albatross-reincarnated/) by Heydon Pickering
+5. [1-Line Layouts](https://1linelayouts.glitch.me/) by Una Kravets
+
+I’ll admit, many of the concepts in those articles didn’t click right away. The holy albatross blew my mind at the time. It took multiple readings and several CodePen experiments to start grasping the ideas being discussed. After a couple of days, things began to make sense. The techniques I’d been struggling with started to click. To reinforce my understanding, I rebuilt several examples from scratch, talking myself through each step to ensure I could not only apply the concepts but also explain them clearly to my colleagues when I returned to work. Here is one of my early [Tailwind Plays](https://play.tailwindcss.com/X1xotpETpM) which worked through a few of the layouts from [Every Layout](https://every-layout.dev/). I admit I'd could have done this with plain CSS, and it may looks strange to have attempted this in Tailwind, but since we were using Tailwind as our CSS framework, it made sense at the time to use that.
+
+We would eventually create components for each layout pattern we needed. Those layout primitives, had a simple responsibility, were designed to be used in composition, and were intrinsically responsive with no dependency on CSS @media query breakpoints. Using [Every Layout](https://every-layout.dev/) as our guide, we built React components for `Sidebar`, `Grid`, `Switcher`, `Cluster`, `Cover`, `Frame`, `Imposter`, `Reel`, and `Stack`.
+
+## Font-scaling
+
+So how does intrinsic responsiveness relate to font-scaling? Intrinsic responsiveness is achieved by choosing properties, values, and units that enables the browser to calculate the most suitable layout on our behalf. We can in some cases achieve container-query like behaviour this way, without using actual CSS container queries. If the units are relative units, it means when scaling the font-size from 16px, the layout should still adopt the best configuration based on the available space.
+
+For example, if we look at the `Sidebar` layout - it is a component that creates a classic sidebar layout, wherein one of two adjacent elements (Bar) has a fixed, percentage, or content-driven width, and the other (Principal) element takes up the rest of the available space. When the principal element reaches a certain percentage of the parents container width, the layout will wrap. Running the below animation will resize the container showing the responsive behaviour of the `Sidebar`.
+
+<SidebarResizeDemo />
+
+What if we didn't resize the container width, but instead simply scaled the font size? Moving the Slider below to the right will increase the font size from 16px set on the container in increments of 1px. For the purpose of the demo, I've set the bar flex-basis value to an `em` unit, so that it scales as the parent font-scale scales. Normally I'd size in `rem` units so that it scales based on the base font size. What you should see here is the bar element width increasing, causing the same percentage based container breakpoint to hit, even though we haven't changed the available container width.
+
+<SidebarLayoutDemo />
+
+This shows the power of intrinsic layouts. The layout techniques can be nested at any point in the DOM hierarchy enabling very complex layouts to be achieved without the need for media queries.
+
+<ComplexLayoutDemo />
+
+I believe intrinsic layout techniques are the best first line of attack, and container queries can be brought in where needed.

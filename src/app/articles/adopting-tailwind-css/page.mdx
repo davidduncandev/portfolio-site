@@ -1,0 +1,30 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+
+export const article = {
+  author: 'David Duncan',
+  date: '2022-08-14',
+  title: 'Adopting Tailwind CSS',
+  description:
+    'My journey towards adopting Tailwind CSS as the ideal solution for a large scale project.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+My path with CSS has had its fair share of challenges. Early in my front-end career, I focused primarily on JavaScript, often working alongside developers who specialized in CSS and took ownership of styling. Inevitably though, I would find myself needing to build a new page when no dedicated CSS developers were available. I remember feeling completely out of my depth, struggling to create fully responsive layouts. Despite the difficulty, I pushed myself and approached my development manager to ask for more opportunities to improve my CSS skills. My goal was clear: I wanted to reach the same level of proficiency as the CSS-focused developers I had worked with.
+
+Not long after, I joined a new team where I became solely responsible for the project's CSS. It was a tough assignment—the codebase included a half-finished custom component library alongside Material Design components, each with their own complex stylesheets. I found myself in a specificity nightmare, battling against deeply nested and conflicting styles. The CSS architecture had grown increasingly unmanageable, and this proved a very challenging time. Still, I came out the other side with a much stronger understanding of how to debug and resolve CSS and specificity issues.
+
+From there, I began volunteering to support our component libraries and worked closely with a principal engineer to create a new design system. Around this time, CSS-in-JS was gaining traction, and we adopted it. My CSS skills continued to grow as I tackled common visual challenges in the design system alongside our engineering leads.
+
+A couple of years later, advisor feedback confirmed we needed to build a dark and high-contrast mode. By this time, the CSS-IN-JS sector had plateaued, possibly due to native CSS adopting many of its advantages. The component library was also compromised due to limitations in component composition and flexibility. Rather than shoehorn theming into our CSS-in-JS setup, we began exploring utility-first CSS and decided to build a new component library to better handle accessibility and composition. The timing was right. Our front-end engineering presence had expanded significantly, and we needed a more scalable, maintainable approach to styling. Tailwind CSS had clearly emerged as a leading solution, offering the kind of workflow we needed.
+
+Reflecting on our earlier semantic CSS approach (using BEM), it worked well when there was strong ownership of the CSS layers. But once that ownership faded, maintainability quickly degraded. The system encouraged premature abstractions and an append-only mindset, leading to bloated stylesheets and increased bundle sizes.
+
+In contrast, Tailwind’s utility-first model provided a much better fit for our scale of operation. We created a custom Tailwind preset and defined our own color palette to support dark and high-contrast themes. These tokens were mirrored in Figma, ensuring consistency between design and implementation. By using single-purpose utility classes directly in markup, we were able to build highly modular, reusable components without the risk of over-abstraction. Ultimately, we successfully onboarded over 55 teams to Tailwind CSS.
+
+Over time, I continued to take on increasingly complex initiatives—such as implementing font scaling using intrinsic layout techniques—which further deepened my understanding of Flexbox and CSS Grid. After years of consistent effort, I feel I’ve achieved my goal of becoming a go-to person for CSS within my team. It’s an exciting time for CSS, and I’ve recently enjoyed exploring new capabilities like container queries and CSS Subgrid to tackle modern layout challenges. Tailwind CSS remains a foundational part of how I write styles and support other teams in building scalable, maintainable UIs.

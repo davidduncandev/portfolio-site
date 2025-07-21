@@ -1,0 +1,28 @@
+```js !!
+const Comp = forwardRef<
+  React.ElementRef<'div'>,
+  React.ComponentPropsWithoutRef<'div'>
+>((props, forwardedRef) => {
+  return (
+    <div ref={forwardedRef} {...props} />
+  );
+});
+```
+
+```js !!
+import { useComposedRefs } from '...';
+
+const Comp = forwardRef<
+  React.ElementRef<'div'>,
+  React.ComponentPropsWithoutRef<'div'>
+>((props, forwardedRef) => {
+  // !callout[/internalRef/] say we need an internal ref
+  const internalRef = React.useRef<React.ElementRef<'div'>>(null);
+  // !callout[/composedRef/] we compose the internal ref with forwarded ref
+  const composedRef = useComposedRefs(internalRef, forwardedRef);
+  return (
+    // !callout[/composedRef/] and pass the composed ref (callback) to the element
+    <div ref={composedRef} {...props} />
+  );
+});
+```

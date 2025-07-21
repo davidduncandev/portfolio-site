@@ -1,0 +1,31 @@
+```js !!
+type CompProps = React.ComponentPropsWithRef<'div'>;
+
+const Comp = forwardRef<
+  React.ElementRef<'div'>,
+  CompProps
+>((props, forwardedRef) => {
+  return (
+    <div ref={forwardedRef} {...props} />
+  );
+});
+```
+
+```js !!
+// !callout[/Slot/] We import Slot from Radix
+import { Slot } from '@radix-ui/react-slot';
+type CompProps = React.ComponentPropsWithRef<'div'> & {
+  asChild?: boolean;
+};
+
+const Comp = forwardRef<
+  React.ElementRef<'div'>,
+  CompProps
+>(({ asChild, ...props }, forwardedRef) => {
+  // !callout[/asChild/] We can now create an asChild prop which renders the Slot if true
+  const Element = asChild ? Slot : 'div';
+  return (
+    <Element ref={forwardedRef} {...props} />
+  );
+});
+```

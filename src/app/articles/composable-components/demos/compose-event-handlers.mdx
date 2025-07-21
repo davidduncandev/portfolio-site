@@ -1,0 +1,25 @@
+```js !!
+const Comp = (props: React.ComponentProps<'button'>) => {
+   const handleClick = (event: React.MouseEvent) => {
+    // your internal handler logic
+  };
+  return <button onClick={handleClick} {...props} />;
+};
+```
+
+```js !!
+import { composeEventHandlers } from '...';
+
+const Comp = ({ onClick, ...rest }: ComponentProps<'button'>) => (
+  <button
+    onClick={composeEventHandlers(
+      onClick,
+      // !callout[/event/] Now a consumer can default prevent our internal handler
+      (event: React.MouseEvent) => {
+        // your internal handler logic
+      }
+    )}
+    {...rest}
+  />
+);
+```
