@@ -1,7 +1,7 @@
 'use client'
 import React, { ReactNode, useState } from 'react'
-import { Switch } from '@/components/switch'
-import { Label } from '@/components/fieldset'
+import { HeadlessSwitch as Switch } from '@/components/HeadlessSwitch'
+import { HeadlessLabel as Label } from '@/components/HeadlessFieldset'
 import * as Headless from '@headlessui/react'
 
 export const AnimateContainer = ({

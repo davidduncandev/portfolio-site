@@ -139,7 +139,7 @@ export default function About() {
           </div>
         </div>
         <div className="lg:pl-20">
-          <ul role="list" class="space-y-6">
+          <ul role="list" className="space-y-6">
             <SocialLink
               target="_blank"
               href="https://github.com/davidduncandev"

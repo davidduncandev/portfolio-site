@@ -9,9 +9,9 @@ import {
 import clsx from 'clsx'
 import { Pre } from 'codehike/code'
 import { tokenTransitions } from '@/components/annotations/token-transitions'
-import { Switch } from '@/components/switch'
+import { HeadlessSwitch as Switch } from '@/components/HeadlessSwitch'
 import * as Headless from '@headlessui/react'
-import { Label } from '@/components/fieldset'
+import { HeadlessLabel as Label } from '@/components/HeadlessFieldset'
 
 export function CodeSwitcher({
   infos,

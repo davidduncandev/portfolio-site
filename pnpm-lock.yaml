@@ -82,6 +82,9 @@ dependencies:
     version: 3.25.48
 
 devDependencies:
+  '@types/mdx':
+    specifier: ^2.0.13
+    version: 2.0.13
   eslint:
     specifier: ^8.56.0
     version: 8.57.1
@@ -1259,7 +1262,6 @@ packages:
 
   /@types/mdx@2.0.13:
     resolution: {integrity: sha512-+OWZQfAYyio6YkJb3HLxDrvnx6SWWDbC0zVPfBRzUk0/nqoDyf6dNxQi3eArPe8rJ473nobTMQ/8Zk+LxJ+Yuw==}
-    dev: false
 
   /@types/ms@2.1.0:
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}

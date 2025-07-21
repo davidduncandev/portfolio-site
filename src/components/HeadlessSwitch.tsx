@@ -2,7 +2,7 @@ import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 import type React from 'react'
 
-export function SwitchGroup({
+export function HeadlessSwitchGroup({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
@@ -21,7 +21,7 @@ export function SwitchGroup({
   )
 }
 
-export function SwitchField({
+export function HeadlessSwitchField({
   className,
   ...props
 }: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) {
@@ -139,7 +139,7 @@ const colors = {
 
 type Color = keyof typeof colors
 
-export function Switch({
+export function HeadlessSwitch({
   color = 'dark/zinc',
   className,
   ...props

@@ -70,6 +70,7 @@ Card.Description = function CardDescription({
   className,
 }: {
   children: React.ReactNode
+  className?: string
 }) {
   return (
     <p

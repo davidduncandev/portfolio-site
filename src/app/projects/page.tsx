@@ -95,10 +95,7 @@ export default function Projects() {
       title="Projects"
       intro="Things I’ve made as I strive to solve common visual, UX and technical challenges and drive accessibility standards."
     >
-      <ul
-        role="list"
-        className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3"
-      >
+      <ul className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <Card as="li" key={project.name} className="gap-2">
             <h2 className="mt-6 text-base font-semibold text-zinc-800 dark:text-zinc-100">
@@ -109,9 +106,7 @@ export default function Projects() {
                 {project.status}
               </span>
             )}
-            <Card.Description className="grow">
-              {project.description}
-            </Card.Description>
+            <Card.Description>{project.description}</Card.Description>
             <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
               <LinkIcon className="h-6 w-6 flex-none" />
               <span className="ml-2">{project.link.label}</span>
