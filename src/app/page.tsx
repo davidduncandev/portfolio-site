@@ -245,7 +245,7 @@ export default async function Home() {
           </div>
         </div>
       </Container>
-      <div className="mx-auto mt-16 max-w-7xl px-20 sm:mt-20">
+      <div className="mx-auto mt-16 max-w-7xl px-6 sm:mt-20">
         <div className="-my-4 grid grid-cols-[repeat(var(--ui-grid-auto-place,auto-fill),minmax(min(var(--ui-grid-min,20rem),100%),1fr))] gap-5 py-4 *:min-h-[23rem]">
           <div
             className={clsx(
