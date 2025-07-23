@@ -37,7 +37,7 @@ For as long as I've been a front-end developer, I've never worked in a codebase 
 - What's the correct ARIA and focus management approach when validating a group of controls?
 - How do we handle complex logic for dynamic forms, and keep users abreast of live UI changes?
 
-Because forms are so widely used, I set out to build a solution that helps teams be more efficient and effective when creating accessible forms. I wanted something flexible—allowing developers to use any form controls they prefer while automatically handling correct ARIA attributes and labeling, and supporting the use of any validation schema library they choose.
+Because forms are so widely used, I set out to build a solution that helps teams be more efficient and effective when creating accessible forms. I wanted something flexible—allowing developers to use any form controls they prefer while automatically handling correct ARIA attributes and labelling, and supporting the use of any validation schema library they choose.
 
 My initial research pointed me to the excellent [Form design patterns](https://formdesignpatterns.com/) book by Adam Silver, which helped clarify several of the open questions I was facing. However, I couldn’t resolve everything on my own—many decisions required design input and a clear strategy for implementing changes. I chose to focus on a composable approach to maximize flexibility, allowing us to achieve significant accessibility improvements while keeping the solution adaptable for future evolution.
 
@@ -49,7 +49,7 @@ Form components should wrap any user-supplied form element and ensure correct AR
 
 ## Labels & Hint Text
 
-Form labels and hint text should be built as composable components. Since labels act as a proxy for their associated input—expanding the clickable area—using composition allows hint text to be injected directly into the label, making it part of that interactive area. Alternatively, a Description component could be used to place hint text outside the label, leveraging aria-describedby for proper accessibility linkage. I viewed the Description component as optional, useful in cases where design constraints prevent injecting hint text into the label itself.
+Form labels and hint text should be built as composable components. Since labels act as a proxy for their associated input—expanding the clickable area—using composition allows hint text to be injected directly into the label, making it part of that interactive area. Alternatively, a `Description` component could be used to place hint text outside the label, leveraging `aria-describedby` for proper accessibility linkage. I viewed the `Description` component as optional, useful in cases where design constraints prevent injecting hint text into the label itself.
 
 <Image src={formLabels} />
 
@@ -65,7 +65,7 @@ I consistently aimed to create an equivalent experience for all users. Providing
 
 ## Error Summary
 
-The solution should also support the Error Summary pattern, where all form errors are displayed together in a block at the top of the form. This panel would use a role="group" and have a tabIndex="-1" to allow it to be programmatically focused without being part of the normal tab order. We intentionally avoid using tabIndex="0", as adding the error summary to the tab sequence could create a confusing tab stop that doesn’t offer meaningful interaction—potentially leading to a WCAG 2.4.3 failure. The summary would include a list of error links to help users quickly navigate to individual issues.
+The solution should also support the Error Summary pattern, where all form errors are displayed together in a block at the top of the form. This panel would use a `role="group"` and have a `tabIndex="-1"` to allow it to be programmatically focused without being part of the normal tab order. We intentionally avoid using `tabIndex="0"`, as adding the error summary to the tab sequence could create a confusing tab stop that doesn’t offer meaningful interaction—potentially leading to a WCAG 2.4.3 failure. The summary would include a list of error links to help users quickly navigate to individual issues.
 
 <Image src={formErrorBlock} />
 
@@ -86,6 +86,10 @@ We could bail out of the composable model and instead internally map over the op
 A good solution instead would be a way for descendants to register themselves into context in such a way that they can retrieve their index position. I was aware of [Reach UIs Descendants](https://github.com/reach/reach-ui/tree/dev/packages/descendants) package, but I hadn't yet spent time to fully understand the full solution. I instead wanted to implement something simpler as a starting point before doing a deeper dive on other implementations in Reach UI, Radix UI, or Base UI. Here’s the basic approach I began with...
 
 <Descendants />
+
+## Required versus Optional fields
+
+My solution didn’t prioritize one strategy over another. Adam Silver makes a compelling argument for highlighting optional fields. By adopting a questioning protocol—where each field's inclusion must be justified and all fields are considered required by default—it becomes more effective to mark optional fields instead. As a result, there's no need to add `aria-required="true"` to required fields.
 
 ## Dynamic Forms
 
