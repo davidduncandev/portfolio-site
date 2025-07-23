@@ -5,10 +5,10 @@ export function SidebarLayoutDemo() {
   return (
     <ScaleContainer name="Sidebar">
       <div className="flex flex-wrap gap-4 *:p-12">
-        <div className="grid grow basis-[10em] place-content-center border-2 border-zinc-400 p-4 dark:text-white">
+        <div className="grid grow basis-[6em] place-content-center border-2 border-zinc-400 p-4 sm:basis-[10em] dark:text-white">
           Bar
         </div>
-        <div className="grid min-w-[60%] grow-[999] basis-0 place-content-center border-2 border-zinc-400 p-4 dark:text-white">
+        <div className="grid min-w-[50%] grow-[999] basis-0 place-content-center border-2 border-zinc-400 p-4 dark:text-white">
           Principal
         </div>
       </div>
@@ -20,10 +20,10 @@ export function SidebarResizeDemo() {
   return (
     <AnimateContainer name="Sidebar">
       <div className="flex flex-wrap gap-4 *:p-12">
-        <div className="grid grow basis-42 place-content-center border-2 border-zinc-400 p-4 dark:text-white">
+        <div className="grid grow basis-[6rem] place-content-center border-2 border-zinc-400 p-4 sm:basis-42 dark:text-white">
           Bar
         </div>
-        <div className="grid min-w-[60%] grow-[999] basis-0 place-content-center border-2 border-zinc-400 p-4 dark:text-white">
+        <div className="grid min-w-[50%] grow-[999] basis-0 place-content-center border-2 border-zinc-400 p-4 dark:text-white">
           Principal
         </div>
       </div>
