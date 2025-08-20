@@ -1,0 +1,50 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import { Announce, Portal, UseAnnounce } from './code-blocks'
+
+export const article = {
+  author: 'David Duncan',
+  date: '2025-08-20',
+  title: 'Live regions in React',
+  description: 'Implementing a solution for live regions in React',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+Screen readers announce content as it receives focus. Certain user interactions which prompt an action may also shift focus. For example, when a dialog appears asking the user to respond, focus is transferred into the dialog. The element that triggers this behavior includes the `aria-haspopup` attribute, which signals to the user that activating it will move focus.
+
+There are cases where notifications appear in the UI without moving the user’s focus. In such situations, the notification is visible on screen but not announced by screen readers. To ensure an equivalent experience for all users, live regions can be used to communicate important updates. However, it’s important to avoid announcing every change on a page. The goal is to strike the right balance—neither over-communicating nor under-communicating—so that users are kept informed of meaningful changes and feel confident using the web application.
+
+## Mirroring visual content into a live region
+
+Most content should be both seen and heard. The primary goal was to ensure that visual notifications could also be announced by mirroring their content into a live region. To achieve this, I designed a component to create at most two live regions: one for polite announcements and another for assertive ones. For broad screen reader and browser compatibility, each region would include both `aria-live` and `role` attributes, paired correctly.
+
+From a developer experience standpoint, the idea was to wrap any notification in an `Announce` React component, which would portal the content into the appropriate live region. To avoid requiring manual setup of live regions, the component would automatically create the live regions on first use, and they would persist to handle future notifications.
+
+Another challenge was context awareness: ensuring that notifications did not announce while a tab or window was hidden. To handle this, the Page Visibility API was integrated, allowing notifications to be silenced in those cases.
+
+### Announce component anatomy
+
+The basic structure of the React component (before full implementation) was defined as follows.
+
+<Announce />
+
+### AnnouncePortal component anatomy
+
+When creating the live regions for the first time, it was necessary to introduce a delay between appending the region to the DOM and appending content into it. Without this, the behavior was inconsistent. The solution I adopted was to queue a callback on the next animation frame (via `requestAnimationFrame`), which updated internal state and then allowed the content to be portal’d. With this approach, testing across different screen reader and browser combinations produced reliable results.
+
+<Portal />
+
+## Invisible live regions
+
+Although less common, it can be useful to announce supplementary aural information that doesn’t always have a direct visual counterpart. For example, an autocomplete control might need to announce suggestions without requiring the user to explore the menu; a stepper component could announce updated values when increment or decrement buttons are pressed, without moving focus; or a loading spinner might benefit from a visually hidden live region that announces 'Loading products' to convey progress.
+
+To support this, I created a `useAnnounce` hook. Unlike the Announce component, it tears down and recreates a live region each time an announcement is made. This better enables the same announcement to be made multiple times. Its basic structure was:
+
+<UseAnnounce />
+
+With these patterns in place, we now had a reliable way to implement live regions. This helped standardize how announcements were handled and also raised the overall accessibility of our applications. By ensuring that critical updates are communicated effectively to all users—whether visually, aurally, or both—we could create more inclusive experiences across dynamic web content.

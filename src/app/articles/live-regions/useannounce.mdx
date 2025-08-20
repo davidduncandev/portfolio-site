@@ -1,0 +1,70 @@
+```js !!
+function useAnnounce(props: UseAnnounceProps = {}) {
+  const { delay = 500, type = 'polite' } = props;
+  const role = ROLES[type];
+
+  const [liveRegion, setLiveRegion] = useState<HTMLElement | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useLayoutEffect(
+    () => () => {
+      // Clean up the live region node on unmount.
+      liveRegion?.remove();
+    },
+    [liveRegion]
+  );
+
+  // create the live region each time
+  useLayoutEffect(() => {
+    if (liveRegion) {
+      return;
+    }
+    if (!message) {
+      return;
+    }
+    setLiveRegion(
+      buildLiveRegionElement(
+        document, { attr: DATA_LIVE_ATTRIBUTE, type, role }
+      )
+    );
+  }, [liveRegion, type, role, message]);
+
+  // there needs to be a delay between the live region being appended
+  // to the DOM and the content being appended to the live region
+  React.useEffect(() => {
+    if (!message) {
+      return;
+    }
+    if (!liveRegion) {
+      return;
+    }
+
+    // queue a callback to set the message
+    window.setTimeout(() => {
+      liveRegion.textContent = message;
+    }, delay);
+  }, [liveRegion, message, delay]);
+
+  // Remove the existing live region so we can recreate a new one
+  // each time. This allows the same announcement to be made
+  // multiple times.
+  const removeOldLiveRegion = React.useCallback(() => {
+    liveRegion?.remove?.();
+    setLiveRegion(null);
+  }, [liveRegion]);
+
+  const announce = React.useCallback(
+    (message: string) => {
+      removeOldLiveRegion();
+      setMessage(message);
+    },
+    [removeOldLiveRegion]
+  );
+  return React.useMemo(
+    () => ({
+      announce
+    }),
+    [announce]
+  );
+}
+```

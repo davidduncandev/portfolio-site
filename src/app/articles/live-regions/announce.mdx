@@ -1,0 +1,40 @@
+```js !!
+const Announce = React.forwardRef<HTMLDivElement, AnnounceProps>(
+  ({ children, type = 'polite', role = ROLES[type], ...props },ref) =>{
+
+    const [liveRegion, setLiveRegion] = React.useState<HTMLElement>();
+
+    const getLiveRegionElement = React.useCallback(() => {
+      // Only create if existing region is not found. We don't want a
+      // live region created for every Announce on a page. Ideally we
+      // want a max of two live regions for polite and assertive
+      // announcements. In the future, we can add support for an
+      // optional identifier to create > 2 regions if that's needed.
+
+    }, [role, type]);
+
+    React.useLayoutEffect(() => {
+      // set live region, creating one if doesn't already exist
+      setLiveRegion(getLiveRegionElement());
+    }, [getLiveRegionElement]);
+
+    React.useEffect(() => {
+      // Use the Page Visibility API to silence announcements when
+      // the document is hidden.
+    }, [getLiveRegionElement, role, type]);
+
+    return (
+      <>
+        <div {...props} ref={ref}>
+          {children}
+        </div>
+        {/* portal into live region for screen reader announcements */}
+        {liveRegion &&
+         <AnnouncePortal liveRegion={liveRegion}>
+           {children}
+         </AnnouncePortal>}
+      </>
+    );
+  }
+);
+```

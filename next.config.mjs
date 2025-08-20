@@ -9,7 +9,7 @@ const chConfig = {
   components: { code: 'Code' },
   // if you can't use RSC:
   // syntaxHighlighting: {
-  //   theme: "github-dark",
+  //   theme: 'github-dark',
   // },
 }
 

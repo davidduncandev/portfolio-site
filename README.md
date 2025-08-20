@@ -18,8 +18,4 @@ The technologies used in this site are:
 
 ## Todo
 
-- Fix the dates on the articles
-- Search for any files referencing template dummy material
-- Check light mode
-- Create skunkworks repo
-- Projects - EditableView, ResizeContainer, Descendant Context Registration
+- Added code hike examples in quickly and desperately needs a refactor into reusable components

@@ -1,0 +1,37 @@
+```js !!
+
+// Requests the browser to call a user-supplied callback
+// function on the next frame.
+export function useNextFrame(callback = noop) {
+  const fn = useCallbackRef(callback);
+  React.useLayoutEffect(() => {
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = window.requestAnimationFrame(() =>
+      (raf2 = window.requestAnimationFrame(fn))
+    );
+    return () => {
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+    };
+  }, [fn]);
+}
+
+const AnnouncePortal = ({
+  children,
+  liveRegion,
+  ...props
+}: AnnouncePortalProps) => {
+  const [announceText, setAnnounceText] = React.useState(false);
+  useNextFrame(() => setAnnounceText(true));
+  return (
+    <>
+      {announceText &&
+        ReactDOM.createPortal(
+          <div {...props}>{children}</div>,
+          liveRegion
+        )}
+    </>
+  );
+};
+```
